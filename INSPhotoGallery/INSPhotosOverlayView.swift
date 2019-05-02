@@ -21,6 +21,7 @@ import UIKit
 
 public protocol INSPhotosOverlayViewable:class {
     var photosViewController: INSPhotosViewController? { get set }
+    var shareAction : INSPhotosViewControllerShareAction? {get set}
     
     func populateWithPhoto(_ photo: INSPhotoViewable)
     func setHidden(_ hidden: Bool, animated: Bool)
@@ -41,7 +42,7 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
     open private(set) var navigationItem: UINavigationItem!
     open weak var photosViewController: INSPhotosViewController?
     private var currentPhoto: INSPhotoViewable?
-    
+    open var shareAction : INSPhotosViewControllerShareAction?
     private var topShadow: CAGradientLayer!
     private var bottomShadow: CAGradientLayer!
     
@@ -138,14 +139,18 @@ open class INSPhotosOverlayView: UIView , INSPhotosOverlayViewable {
     }
     
     @objc private func actionButtonTapped(_ sender: UIBarButtonItem) {
-        if let currentPhoto = currentPhoto {
-            currentPhoto.loadImageWithCompletionHandler({ [weak self] (image, error) -> () in
-                if let image = (image ?? currentPhoto.thumbnailImage) {
-                    let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-                    activityController.popoverPresentationController?.barButtonItem = sender
-                    self?.photosViewController?.present(activityController, animated: true, completion: nil)
-                }
-            });
+        if let action = shareAction{
+            action()
+        }else{
+            if let currentPhoto = currentPhoto {
+                currentPhoto.loadImageWithCompletionHandler({ [weak self] (image, error) -> () in
+                    if let image = (image ?? currentPhoto.thumbnailImage) {
+                        let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                        activityController.popoverPresentationController?.barButtonItem = sender
+                        self?.photosViewController?.present(activityController, animated: true, completion: nil)
+                    }
+                });
+            }
         }
     }
     

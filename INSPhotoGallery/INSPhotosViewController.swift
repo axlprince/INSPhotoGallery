@@ -24,6 +24,7 @@ public typealias INSPhotosViewControllerNavigateToPhotoHandler = (_ photo: INSPh
 public typealias INSPhotosViewControllerDismissHandler = (_ viewController: INSPhotosViewController) -> ()
 public typealias INSPhotosViewControllerLongPressHandler = (_ photo: INSPhotoViewable, _ gestureRecognizer: UILongPressGestureRecognizer) -> (Bool)
 public typealias INSPhotosViewControllerDeletePhotoHandler = (_ photo: INSPhotoViewable) -> ()
+public typealias INSPhotosViewControllerShareAction = () -> ()
 
 
 open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIViewControllerTransitioningDelegate {
@@ -59,6 +60,15 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
     open var deletePhotoHandler: INSPhotosViewControllerDeletePhotoHandler?
     
     /*
+     * External action closure
+     */
+    open var shareInteractionAction : INSPhotosViewControllerShareAction?{
+        didSet{
+            overlayView.shareAction = shareInteractionAction
+        }
+    }
+    
+    /*
      * The overlay view displayed over photos, can be changed but must implement INSPhotosOverlayViewable
      */
     open var overlayView: INSPhotosOverlayViewable = INSPhotosOverlayView(frame: CGRect.zero) {
@@ -66,6 +76,7 @@ open class INSPhotosViewController: UIViewController, UIPageViewControllerDataSo
             overlayView.view().removeFromSuperview()
         }
         didSet {
+            overlayView.shareAction = shareInteractionAction
             overlayView.photosViewController = self
             overlayView.view().autoresizingMask = [.flexibleWidth, .flexibleHeight]
             overlayView.view().frame = view.bounds
