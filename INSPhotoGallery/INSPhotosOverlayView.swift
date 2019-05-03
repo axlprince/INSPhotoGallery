@@ -22,6 +22,8 @@ import UIKit
 public protocol INSPhotosOverlayViewable:class {
     var photosViewController: INSPhotosViewController? { get set }
     var shareAction : INSPhotosViewControllerShareAction? {get set}
+    var leftBarButtonItem: UIBarButtonItem? {get set}
+    var rightBarButtonItem: UIBarButtonItem? { get set }
     
     func populateWithPhoto(_ photo: INSPhotoViewable)
     func setHidden(_ hidden: Bool, animated: Bool)
